@@ -4,8 +4,8 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/hex"
 	"fmt"
+	"sort"
 
 	"github.com/pkg/errors"
 )
@@ -30,6 +30,7 @@ func (i *ImgproxyURLData) Generate(uri string) (string, error) {
 		keys[j] = key
 		j++
 	}
+	sort.Strings(keys)
 
 	options := "/"
 	for _, key := range keys {
@@ -47,7 +48,7 @@ func (i *ImgproxyURLData) Generate(uri string) (string, error) {
 		return "", errors.WithStack(err)
 	}
 
-	sha := hex.EncodeToString(signature.Sum(nil))[:i.cfg.SignatureSize]
+	sha := base64.RawURLEncoding.EncodeToString(signature.Sum(nil)[:i.cfg.SignatureSize])
 
 	return i.cfg.BaseURL + sha + uriWithOptions, nil
 }
@@ -64,17 +65,16 @@ const (
 
 // Resize resizes the image.
 func (i *ImgproxyURLData) Resize(resizingType ResizingType, width int, height int, enlarge bool) *ImgproxyURLData {
-	i.SetOption("rs", fmt.Sprintf(
+	return i.SetOption("rs", fmt.Sprintf(
 		"%s:%d:%d:%s",
 		resizingType,
 		width, height,
 		boolAsNumberString(enlarge),
 	))
-
-	return i
 }
 
 // SetOption sets an option on the URL.
-func (i *ImgproxyURLData) SetOption(key, value string) {
+func (i *ImgproxyURLData) SetOption(key, value string) *ImgproxyURLData {
 	i.Options[key] = value
+	return i
 }

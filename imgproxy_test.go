@@ -20,6 +20,6 @@ func Test_Imgproxy(t *testing.T) {
 
 		url, err := ip.Builder().Resize(ResizingTypeFit, 123, 456, true).Generate("my/image.jpg")
 		So(err, ShouldBeNil)
-		So(url, ShouldEqual, "http://localhost/ed574597a1570b1/rs:fit:123:456:1/bXkvaW1hZ2UuanBn")
+		So(url, ShouldEqual, "http://localhost/7VdFl6FXCxFd1fcY-HKK/rs:fit:123:456:1/bXkvaW1hZ2UuanBn")
 	})
 }
