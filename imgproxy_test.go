@@ -4,11 +4,27 @@ import (
 	"encoding/hex"
 	"testing"
 
+	"github.com/pkg/errors"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func Test_Imgproxy(t *testing.T) {
-	Convey("Imgproxy", t, func() {
+func Test_NewImgproxy(t *testing.T) {
+	Convey("NewImgproxy()", t, func() {
+		Convey("Retunrs error if the signature is not valid", func() {
+			_, err := NewImgproxy(Config{
+				BaseURL:       "http://localhost",
+				SignatureSize: 33,
+				Key:           hex.EncodeToString([]byte("key")),
+				Salt:          hex.EncodeToString([]byte("salt")),
+				Encode:        true,
+			})
+			So(errors.Cause(err), ShouldResemble, ErrInvalidSignature)
+		})
+	})
+}
+
+func Test_ImgproxyBuilder(t *testing.T) {
+	Convey("Imgproxy.Builder()", t, func() {
 		Convey("Returns the url with the uri encoded when Encode is true", func() {
 			ip, err := NewImgproxy(Config{
 				BaseURL:       "http://localhost",
@@ -24,7 +40,22 @@ func Test_Imgproxy(t *testing.T) {
 			So(url, ShouldEqual, "http://localhost/6wIzqvuZtfHT1LL3J_z0/bXkvaW1hZ2UuanBn")
 		})
 
-		Convey("With encode false", func() {
+		Convey("Returns the url without signature when key and salt are empty", func() {
+			ip, err := NewImgproxy(Config{
+				BaseURL:       "http://localhost",
+				SignatureSize: 15,
+				Key:           "",
+				Salt:          "",
+				Encode:        false,
+			})
+			So(err, ShouldBeNil)
+
+			url, err := ip.Builder().Generate("my/image.jpg")
+			So(err, ShouldBeNil)
+			So(url, ShouldEqual, "http://localhost/insecure/plain/my/image.jpg")
+		})
+
+		Convey("With key salt and no encoded", func() {
 			ip, err := NewImgproxy(Config{
 				BaseURL:       "http://localhost",
 				SignatureSize: 15,

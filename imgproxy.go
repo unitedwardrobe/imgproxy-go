@@ -2,6 +2,7 @@ package imgproxy
 
 import (
 	"encoding/hex"
+	stdErrs "errors"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -14,10 +15,17 @@ type Imgproxy struct {
 	salt []byte
 }
 
+// ErrInvalidSignature error.
+var ErrInvalidSignature = stdErrs.New("invalid signature size")
+
 // NewImgproxy returns a new *Imgproxy.
 func NewImgproxy(cfg Config) (*Imgproxy, error) {
 	if !strings.HasSuffix(cfg.BaseURL, "/") {
 		cfg.BaseURL = cfg.BaseURL + "/"
+	}
+
+	if cfg.SignatureSize < 1 || cfg.SignatureSize > 32 {
+		return nil, errors.WithStack(ErrInvalidSignature)
 	}
 
 	key, err := hex.DecodeString(cfg.Key)

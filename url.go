@@ -18,6 +18,8 @@ type ImgproxyURLData struct {
 	Options map[string]string
 }
 
+const insecureSignature = "insecure"
+
 // Generate generates the imgproxy URL.
 func (i *ImgproxyURLData) Generate(uri string) (string, error) {
 	if i.cfg.Encode {
@@ -40,19 +42,33 @@ func (i *ImgproxyURLData) Generate(uri string) (string, error) {
 	}
 
 	uriWithOptions := options + uri
-	signature := hmac.New(sha256.New, i.key)
 
-	if _, err := signature.Write(i.salt); err != nil {
+	if len(i.salt) == 0 && len(i.key) == 0 {
+		return i.cfg.BaseURL + insecureSignature + uriWithOptions, nil
+	}
+
+	signature, err := getSignatureHash(i.key, i.salt, i.cfg.SignatureSize, uriWithOptions)
+	if err != nil {
+		return "", err
+	}
+
+	return i.cfg.BaseURL + signature + uriWithOptions, nil
+}
+
+func getSignatureHash(key []byte, salt []byte, signatureSize int, uriOptions string) (string, error) {
+	signature := hmac.New(sha256.New, key)
+
+	if _, err := signature.Write(salt); err != nil {
 		return "", errors.WithStack(err)
 	}
 
-	if _, err := signature.Write([]byte(uriWithOptions)); err != nil {
+	if _, err := signature.Write([]byte(uriOptions)); err != nil {
 		return "", errors.WithStack(err)
 	}
 
-	sha := base64.URLEncoding.EncodeToString(signature.Sum(nil)[:i.cfg.SignatureSize])
+	sha := base64.URLEncoding.EncodeToString(signature.Sum(nil)[:signatureSize])
 
-	return i.cfg.BaseURL + sha + uriWithOptions, nil
+	return sha, nil
 }
 
 // resizingType enum.
