@@ -25,7 +25,7 @@ func Test_NewImgproxy(t *testing.T) {
 
 func Test_ImgproxyBuilder(t *testing.T) {
 	Convey("Imgproxy.Builder()", t, func() {
-		Convey("Returns the url with the uri encoded when Encode is true", func() {
+		Convey("Returns the url with the uri encoded and sign when Encode is true and key and salt are not empty", func() {
 			ip, err := NewImgproxy(Config{
 				BaseURL:       "http://localhost",
 				SignatureSize: 15,

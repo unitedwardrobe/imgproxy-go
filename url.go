@@ -55,14 +55,14 @@ func (i *ImgproxyURLData) Generate(uri string) (string, error) {
 	return i.cfg.BaseURL + signature + uriWithOptions, nil
 }
 
-func getSignatureHash(key []byte, salt []byte, signatureSize int, uriOptions string) (string, error) {
+func getSignatureHash(key []byte, salt []byte, signatureSize int, payload string) (string, error) {
 	signature := hmac.New(sha256.New, key)
 
 	if _, err := signature.Write(salt); err != nil {
 		return "", errors.WithStack(err)
 	}
 
-	if _, err := signature.Write([]byte(uriOptions)); err != nil {
+	if _, err := signature.Write([]byte(payload)); err != nil {
 		return "", errors.WithStack(err)
 	}
 

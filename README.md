@@ -4,7 +4,7 @@ A Go client library to generate urls for imgproxy services.
 
 Based on https://docs.imgproxy.net/
 
-**Note:** Is not feature complete.
+**Note:** This library is not feature complete.
 
 ## Usage
 
