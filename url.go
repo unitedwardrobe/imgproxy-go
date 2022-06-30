@@ -66,7 +66,7 @@ func getSignatureHash(key []byte, salt []byte, signatureSize int, payload string
 		return "", errors.WithStack(err)
 	}
 
-	sha := base64.URLEncoding.EncodeToString(signature.Sum(nil)[:signatureSize])
+	sha := base64.RawURLEncoding.EncodeToString(signature.Sum(nil)[:signatureSize])
 
 	return sha, nil
 }
