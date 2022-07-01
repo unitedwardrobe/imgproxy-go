@@ -71,20 +71,20 @@ func getSignatureHash(key []byte, salt []byte, signatureSize int, payload string
 	return sha, nil
 }
 
-// resizingType enum.
-type resizingType string
+// ResizingType enum.
+type ResizingType string
 
 // ResizingType enum.
 const (
-	ResizingTypeFit      = resizingType("fit")       // resizes the image while keeping aspect ratio to fit a given size.
-	ResizingTypeFill     = resizingType("fill")      // resizes the image while keeping aspect ratio to fill a given size and crops projecting parts.
-	ResizingTypeFillDown = resizingType("fill-down") // the same as fill, but if the resized image is smaller than the requested size, imgproxy will crop the result to keep the requested aspect ratio.
-	ResizingTypeForce    = resizingType("force")     // resizes the image without keeping the aspect ratio.
-	ResizingTypeAuto     = resizingType("auto")      // if both source and resulting dimensions have the same orientation (portrait or landscape), imgproxy will use fill. Otherwise, it will use fit.
+	ResizingTypeFit      = ResizingType("fit")       // resizes the image while keeping aspect ratio to fit a given size.
+	ResizingTypeFill     = ResizingType("fill")      // resizes the image while keeping aspect ratio to fill a given size and crops projecting parts.
+	ResizingTypeFillDown = ResizingType("fill-down") // the same as fill, but if the resized image is smaller than the requested size, imgproxy will crop the result to keep the requested aspect ratio.
+	ResizingTypeForce    = ResizingType("force")     // resizes the image without keeping the aspect ratio.
+	ResizingTypeAuto     = ResizingType("auto")      // if both source and resulting dimensions have the same orientation (portrait or landscape), imgproxy will use fill. Otherwise, it will use fit.
 )
 
 // Resize resizes the image.
-func (i *ImgproxyURLData) Resize(resizingType resizingType, width int, height int, enlarge bool, extend bool) *ImgproxyURLData {
+func (i *ImgproxyURLData) Resize(resizingType ResizingType, width int, height int, enlarge bool, extend bool) *ImgproxyURLData {
 	return i.SetOption("rs", fmt.Sprintf(
 		"%s:%d:%d:%s:%s",
 		resizingType,
@@ -102,7 +102,7 @@ func (i *ImgproxyURLData) Size(width int, height int, enlarge bool) *ImgproxyURL
 	))
 }
 
-func (i *ImgproxyURLData) ResizingType(resizingType resizingType) *ImgproxyURLData {
+func (i *ImgproxyURLData) ResizingType(resizingType ResizingType) *ImgproxyURLData {
 	return i.SetOption("rs", string(resizingType))
 }
 
@@ -141,7 +141,7 @@ type GravitySetter interface {
 }
 
 type OffsetGravity struct {
-	Type    gravityEnum
+	Type    GravityEnum
 	XOffset int
 	YOffset int
 }
@@ -167,26 +167,26 @@ func (f FocusPoint) GetStringOption() string {
 	return fmt.Sprintf("fp:%d:%d", f.X, f.Y)
 }
 
-type gravityEnum string
+type GravityEnum string
 
 const (
-	GravityEnumCenter    = gravityEnum("ce")   // default
-	GravityEnumNorth     = gravityEnum("no")   // (top edge)
-	GravityEnumSouth     = gravityEnum("so")   // (bottom edge)
-	GravityEnumEast      = gravityEnum("ea")   // (right edge)
-	GravityEnumWest      = gravityEnum("we")   // (left edge)
-	GravityEnumNorthEast = gravityEnum("noea") // (top-right corner)
-	GravityEnumNorthWest = gravityEnum("nowe") // (top-left corner)
-	GravityEnumSouthEast = gravityEnum("soea") // (bottom-right corner)
-	GravityEnumSouthWest = gravityEnum("sowe") // (bottom-left corner)
-	GravityEnumSmart     = gravityEnum("sm")   // libvips detects the most "interesting" section of the image and considers it as the center of the resulting image
+	GravityEnumCenter    = GravityEnum("ce")   // default
+	GravityEnumNorth     = GravityEnum("no")   // (top edge)
+	GravityEnumSouth     = GravityEnum("so")   // (bottom edge)
+	GravityEnumEast      = GravityEnum("ea")   // (right edge)
+	GravityEnumWest      = GravityEnum("we")   // (left edge)
+	GravityEnumNorthEast = GravityEnum("noea") // (top-right corner)
+	GravityEnumNorthWest = GravityEnum("nowe") // (top-left corner)
+	GravityEnumSouthEast = GravityEnum("soea") // (bottom-right corner)
+	GravityEnumSouthWest = GravityEnum("sowe") // (bottom-left corner)
+	GravityEnumSmart     = GravityEnum("sm")   // libvips detects the most "interesting" section of the image and considers it as the center of the resulting image
 )
 
-func (g gravityEnum) SetGravityOption(i *ImgproxyURLData) *ImgproxyURLData {
+func (g GravityEnum) SetGravityOption(i *ImgproxyURLData) *ImgproxyURLData {
 	return i.SetOption("g", g.GetStringOption())
 }
 
-func (g gravityEnum) GetStringOption() string {
+func (g GravityEnum) GetStringOption() string {
 	return string(g)
 }
 

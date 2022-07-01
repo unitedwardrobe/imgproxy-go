@@ -69,7 +69,7 @@ func Test_ImgproxyBuilder(t *testing.T) {
 			Convey("With resize", func() {
 				Convey("Sets fit option", func() {
 					url, err := ip.Builder().
-						Resize(ResizingTypeFit, 123, 456, true).
+						Resize(ResizingTypeFit, 123, 456, true, false).
 						Generate("my/image.jpg")
 
 					So(err, ShouldBeNil)
@@ -78,7 +78,7 @@ func Test_ImgproxyBuilder(t *testing.T) {
 
 				Convey("Sets fill option", func() {
 					url, err := ip.Builder().
-						Resize(ResizingTypeFill, 123, 456, true).
+						Resize(ResizingTypeFill, 123, 456, true, false).
 						Generate("my/image.jpg")
 
 					So(err, ShouldBeNil)
