@@ -9,13 +9,15 @@ Based on https://docs.imgproxy.net/
 ## Usage
 
 ```go
+  package main
+
   import (
     "fmt"
 
     "github.com/unitedwardrobe/imgproxy-go"
   )
 
-  func main(){
+  func main() {
     ip, err := imgproxy.NewImgproxy(imgproxy.Config{
       BaseURL:       "http://localhost",
       SignatureSize: 15,
