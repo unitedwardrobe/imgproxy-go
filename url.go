@@ -79,7 +79,7 @@ const (
 	ResizingTypeFit      = resizingType("fit")       // resizes the image while keeping aspect ratio to fit a given size.
 	ResizingTypeFill     = resizingType("fill")      // resizes the image while keeping aspect ratio to fill a given size and crops projecting parts.
 	ResizingTypeFillDown = resizingType("fill-down") // the same as fill, but if the resized image is smaller than the requested size, imgproxy will crop the result to keep the requested aspect ratio.
-	ResizingTypeForse    = resizingType("forse")     // resizes the image without keeping the aspect ratio.
+	ResizingTypeForce    = resizingType("force")     // resizes the image without keeping the aspect ratio.
 	ResizingTypeAuto     = resizingType("auto")      // if both source and resulting dimensions have the same orientation (portrait or landscape), imgproxy will use fill. Otherwise, it will use fit.
 )
 
