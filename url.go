@@ -84,12 +84,13 @@ const (
 )
 
 // Resize resizes the image.
-func (i *ImgproxyURLData) Resize(resizingType resizingType, width int, height int, enlarge bool) *ImgproxyURLData {
+func (i *ImgproxyURLData) Resize(resizingType resizingType, width int, height int, enlarge bool, extend bool) *ImgproxyURLData {
 	return i.SetOption("rs", fmt.Sprintf(
-		"%s:%d:%d:%s",
+		"%s:%d:%d:%s:%s",
 		resizingType,
 		width, height,
 		boolAsNumberString(enlarge),
+		boolAsNumberString(extend),
 	))
 }
 
