@@ -73,7 +73,7 @@ func Test_ImgproxyBuilder(t *testing.T) {
 						Generate("my/image.jpg")
 
 					So(err, ShouldBeNil)
-					So(url, ShouldEqual, "http://localhost/GmhHRFFOqT3jETNsx2ag/rs:fit:123:456:1/plain/my/image.jpg")
+					So(url, ShouldEqual, "http://localhost/T0ConuLHyLnlO4IUVQqd/rs:fit:123:456:1:0/plain/my/image.jpg")
 				})
 
 				Convey("Sets fill option", func() {
@@ -82,7 +82,7 @@ func Test_ImgproxyBuilder(t *testing.T) {
 						Generate("my/image.jpg")
 
 					So(err, ShouldBeNil)
-					So(url, ShouldEqual, "http://localhost/ya-KQkCvu-ZWLI2hZ3IT/rs:fill:123:456:1/plain/my/image.jpg")
+					So(url, ShouldEqual, "http://localhost/UWRUm-AJnTk16FBM9PL9/rs:fill:123:456:1:0/plain/my/image.jpg")
 				})
 			})
 
