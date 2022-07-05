@@ -1,0 +1,32 @@
+name: main
+on:
+  push:
+    branches-ignore: ['*']
+    tags: [v*]
+  pull_request:
+    branches: ['*']
+    tags-ignore: [v*]
+    types: ['opened', 'reopened', 'closed', 'synchronize', 'labeled']
+
+jobs:
+  ci:
+    runs-on: ubuntu-18.04
+
+    strategy:
+      matrix:
+        go: ['1.18']
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Vet
+        run: go vet
+
+      - name: Tests
+        run: go test
