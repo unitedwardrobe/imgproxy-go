@@ -6,5 +6,5 @@ type Config struct {
 	SignatureSize int
 	Key           string
 	Salt          string
-	Encode        bool
+	EncodePath    bool
 }

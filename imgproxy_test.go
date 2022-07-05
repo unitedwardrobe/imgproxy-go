@@ -16,7 +16,7 @@ func Test_NewImgproxy(t *testing.T) {
 				SignatureSize: 33,
 				Key:           hex.EncodeToString([]byte("key")),
 				Salt:          hex.EncodeToString([]byte("salt")),
-				Encode:        true,
+				EncodePath:    true,
 			})
 			So(errors.Cause(err), ShouldResemble, ErrInvalidSignature)
 		})
@@ -31,7 +31,7 @@ func Test_ImgproxyBuilder(t *testing.T) {
 				SignatureSize: 15,
 				Key:           hex.EncodeToString([]byte("key")),
 				Salt:          hex.EncodeToString([]byte("salt")),
-				Encode:        true,
+				EncodePath:    true,
 			})
 			So(err, ShouldBeNil)
 
@@ -46,7 +46,7 @@ func Test_ImgproxyBuilder(t *testing.T) {
 				SignatureSize: 15,
 				Key:           "",
 				Salt:          "",
-				Encode:        false,
+				EncodePath:    false,
 			})
 			So(err, ShouldBeNil)
 
@@ -61,7 +61,7 @@ func Test_ImgproxyBuilder(t *testing.T) {
 				SignatureSize: 15,
 				Key:           hex.EncodeToString([]byte("key")),
 				Salt:          hex.EncodeToString([]byte("salt")),
-				Encode:        false,
+				EncodePath:    false,
 			})
 
 			So(err, ShouldBeNil)

@@ -22,7 +22,7 @@ const insecureSignature = "insecure"
 
 // Generate generates the imgproxy URL.
 func (i *ImgproxyURLData) Generate(uri string) (string, error) {
-	if i.cfg.Encode {
+	if i.cfg.EncodePath {
 		uri = base64.RawStdEncoding.EncodeToString([]byte(uri))
 	} else {
 		uri = "plain/" + uri
@@ -76,11 +76,20 @@ type ResizingType string
 
 // ResizingType enum.
 const (
-	ResizingTypeFit      = ResizingType("fit")       // resizes the image while keeping aspect ratio to fit a given size.
-	ResizingTypeFill     = ResizingType("fill")      // resizes the image while keeping aspect ratio to fill a given size and crops projecting parts.
-	ResizingTypeFillDown = ResizingType("fill-down") // the same as fill, but if the resized image is smaller than the requested size, imgproxy will crop the result to keep the requested aspect ratio.
-	ResizingTypeForce    = ResizingType("force")     // resizes the image without keeping the aspect ratio.
-	ResizingTypeAuto     = ResizingType("auto")      // if both source and resulting dimensions have the same orientation (portrait or landscape), imgproxy will use fill. Otherwise, it will use fit.
+	// Resizes the image while keeping aspect ratio to fit a given size.
+	ResizingTypeFit = ResizingType("fit")
+
+	// Resizes the image while keeping aspect ratio to fill a given size and crops projecting parts.
+	ResizingTypeFill = ResizingType("fill")
+
+	// The same as fill, but if the resized image is smaller than the requested size, imgproxy will crop the result to keep the requested aspect ratio.
+	ResizingTypeFillDown = ResizingType("fill-down")
+
+	// Resizes the image without keeping the aspect ratio.
+	ResizingTypeForce = ResizingType("force")
+
+	// If both source and resulting dimensions have the same orientation (portrait or landscape), imgproxy will use fill. Otherwise, it will use fit.
+	ResizingTypeAuto = ResizingType("auto")
 )
 
 // Resize resizes the image.
@@ -94,6 +103,7 @@ func (i *ImgproxyURLData) Resize(resizingType ResizingType, width int, height in
 	))
 }
 
+// Size sets size option.
 func (i *ImgproxyURLData) Size(width int, height int, enlarge bool) *ImgproxyURLData {
 	return i.SetOption("s", fmt.Sprintf(
 		"%d:%d:%s",
@@ -102,6 +112,7 @@ func (i *ImgproxyURLData) Size(width int, height int, enlarge bool) *ImgproxyURL
 	))
 }
 
+// ResizingType sets the resizing type.
 func (i *ImgproxyURLData) ResizingType(resizingType ResizingType) *ImgproxyURLData {
 	return i.SetOption("rs", string(resizingType))
 }
@@ -135,57 +146,78 @@ func (i *ImgproxyURLData) Enlarge(enlarge int) *ImgproxyURLData {
 
 }
 
+// GravitySetter interface to set and get a gravity option.
 type GravitySetter interface {
 	SetGravityOption(i *ImgproxyURLData) *ImgproxyURLData
 	GetStringOption() string
 }
 
+// OffsetGravity holds a gravity type and offsets coordinates.
 type OffsetGravity struct {
 	Type    GravityEnum
 	XOffset int
 	YOffset int
 }
 
+// SetGravityOption sets the gravity option.
 func (o OffsetGravity) SetGravityOption(i *ImgproxyURLData) *ImgproxyURLData {
 	return i.SetOption("g", o.GetStringOption())
 }
 
+// GetStringOption gets the gravity offset value as string.
 func (o OffsetGravity) GetStringOption() string {
 	return fmt.Sprintf("%s:%d:%d", o.Type, o.XOffset, o.YOffset)
 }
 
+// FocusPoint holds the coordinates of the focus point.
 type FocusPoint struct {
 	X int64
 	Y int64
 }
 
+// SetGravityOption sets gravity option.
 func (f FocusPoint) SetGravityOption(i *ImgproxyURLData) *ImgproxyURLData {
 	return i.SetOption("g", f.GetStringOption())
 }
 
+// GetStringOption gets the focus point value as string.
 func (f FocusPoint) GetStringOption() string {
 	return fmt.Sprintf("fp:%d:%d", f.X, f.Y)
 }
 
+// GravityEnum holds a gravity option value.
 type GravityEnum string
 
+// GravityEnum constants.
 const (
-	GravityEnumCenter    = GravityEnum("ce")   // default
-	GravityEnumNorth     = GravityEnum("no")   // (top edge)
-	GravityEnumSouth     = GravityEnum("so")   // (bottom edge)
-	GravityEnumEast      = GravityEnum("ea")   // (right edge)
-	GravityEnumWest      = GravityEnum("we")   // (left edge)
-	GravityEnumNorthEast = GravityEnum("noea") // (top-right corner)
-	GravityEnumNorthWest = GravityEnum("nowe") // (top-left corner)
-	GravityEnumSouthEast = GravityEnum("soea") // (bottom-right corner)
-	GravityEnumSouthWest = GravityEnum("sowe") // (bottom-left corner)
-	GravityEnumSmart     = GravityEnum("sm")   // libvips detects the most "interesting" section of the image and considers it as the center of the resulting image
+	// Default gravity position.
+	GravityEnumCenter = GravityEnum("ce")
+	// Top edge.
+	GravityEnumNorth = GravityEnum("no")
+	// Bottom edge.
+	GravityEnumSouth = GravityEnum("so")
+	// Right edge.
+	GravityEnumEast = GravityEnum("ea")
+	// Left edge.
+	GravityEnumWest = GravityEnum("we")
+	// Top-right corner.
+	GravityEnumNorthEast = GravityEnum("noea")
+	// Top-left corner.
+	GravityEnumNorthWest = GravityEnum("nowe")
+	// Bottom-right corner.
+	GravityEnumSouthEast = GravityEnum("soea")
+	// Bottom-left corner.
+	GravityEnumSouthWest = GravityEnum("sowe")
+	// Libvips detects the most "interesting" section of the image and considers it as the center of the resulting image.
+	GravityEnumSmart = GravityEnum("sm")
 )
 
+// SetGravityOption sets the gravity option.
 func (g GravityEnum) SetGravityOption(i *ImgproxyURLData) *ImgproxyURLData {
 	return i.SetOption("g", g.GetStringOption())
 }
 
+// GetStringOption gets the gravity value as string.
 func (g GravityEnum) GetStringOption() string {
 	return string(g)
 }
@@ -200,22 +232,27 @@ func (i *ImgproxyURLData) Quality(quality int) *ImgproxyURLData {
 	return i.SetOption("q", strconv.Itoa(quality))
 }
 
+// HexColor holds an hexadecimal format color.
 type HexColor string
 
+// SetBgOption sets the background option.
 func (h HexColor) SetBgOption(i *ImgproxyURLData) *ImgproxyURLData {
 	return i.SetOption("bg", string(h))
 }
 
+// RGBColor holds an RGB color.
 type RGBColor struct {
 	R int
 	G int
 	B int
 }
 
+// SetBgOption sets the background option.
 func (rgb RGBColor) SetBgOption(i *ImgproxyURLData) *ImgproxyURLData {
 	return i.SetOption("bg", fmt.Sprintf("%d:%d:%d", rgb.R, rgb.G, rgb.B))
 }
 
+// BackgroundSetter interface to set the background option.
 type BackgroundSetter interface {
 	SetBgOption(*ImgproxyURLData) *ImgproxyURLData
 }
@@ -240,28 +277,51 @@ func (i *ImgproxyURLData) Sharpen(sigma int) *ImgproxyURLData {
 	return i.SetOption("sh", strconv.Itoa(sigma))
 }
 
-type watermarkPosition string
+// WatermarkPosition holds a watermark position option.
+type WatermarkPosition string
 
+// WatermarkPosition constants.
 const (
-	WatermarkPositionCenter    = watermarkPosition("ce")   // default
-	WatermarkPositionNorth     = watermarkPosition("no")   // (top edge);
-	WatermarkPositionSouth     = watermarkPosition("so")   // (bottom edge);
-	WatermarkPositionEast      = watermarkPosition("ea")   // (right edge);
-	WatermarkPositionWest      = watermarkPosition("we")   // (left edge);
-	WatermarkPositionNorthEast = watermarkPosition("noea") // (top-right corner);
-	WatermarkPositionNorthWest = watermarkPosition("nowe") // (top-left corner);
-	WatermarkPositionSouthEast = watermarkPosition("soea") // (bottom-right corner);
-	WatermarkPositionSouthWest = watermarkPosition("sowe") // (bottom-left corner);
-	WatermarkPositionReplicate = watermarkPosition("re")   // replicate watermark to fill the whole image;
+	// Default postion.
+
+	WatermarkPositionCenter = WatermarkPosition("ce")
+	// Top edge.
+
+	WatermarkPositionNorth = WatermarkPosition("no")
+	// Bottom edge.
+
+	WatermarkPositionSouth = WatermarkPosition("so")
+	// Right edge.
+
+	WatermarkPositionEast = WatermarkPosition("ea")
+	// Left edge.
+
+	WatermarkPositionWest = WatermarkPosition("we")
+	// Top-right corner.
+
+	WatermarkPositionNorthEast = WatermarkPosition("noea")
+	// Top-left corner.
+
+	WatermarkPositionNorthWest = WatermarkPosition("nowe")
+	// Bottom-right corner.
+
+	WatermarkPositionSouthEast = WatermarkPosition("soea")
+	// Bottom-left corner.
+
+	WatermarkPositionSouthWest = WatermarkPosition("sowe")
+	// Replicate watermark to fill the whole image.
+
+	WatermarkPositionReplicate = WatermarkPosition("re")
 )
 
+// WatermarkOffset holds the watermark coordinates.
 type WatermarkOffset struct {
 	X int
 	Y int
 }
 
 // Watermark places a watermark on the processed image.
-func (i *ImgproxyURLData) Watermark(opacity int, position watermarkPosition, offset *WatermarkOffset, scale int) *ImgproxyURLData {
+func (i *ImgproxyURLData) Watermark(opacity int, position WatermarkPosition, offset *WatermarkOffset, scale int) *ImgproxyURLData {
 	var offsetStr string
 
 	if offset != nil {
@@ -292,6 +352,7 @@ func (i *ImgproxyURLData) Format(extension string) *ImgproxyURLData {
 	return i.SetOption("f", extension)
 }
 
+// Crop sets the crop option.
 func (i *ImgproxyURLData) Crop(width int, height int, gravity GravitySetter) *ImgproxyURLData {
 	crop := fmt.Sprintf("%d:%d", width, height)
 
