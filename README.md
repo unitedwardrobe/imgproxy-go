@@ -23,7 +23,7 @@ Based on https://docs.imgproxy.net/
       SignatureSize: 15,
       Key:           hex.EncodeToString([]byte("key")),
       Salt:          hex.EncodeToString([]byte("salt")),
-      Encode:        false,
+      EncodePath:    false,
     })
     if err != nil {
       panic(err)
